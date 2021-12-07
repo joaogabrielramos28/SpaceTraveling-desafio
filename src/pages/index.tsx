@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next';
+import { GetStaticProps, NextComponentType } from 'next';
 
 import { getPrismicClient } from '../services/prismic';
 
@@ -24,9 +24,10 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-// export default function Home() {
-//   // TODO
-// }
+const Home: NextComponentType = () => {
+  return <h2>Home</h2>;
+  // TODO
+};
 
 // export const getStaticProps = async () => {
 //   // const prismic = getPrismicClient();
@@ -34,3 +35,5 @@ interface HomeProps {
 
 //   // TODO
 // };
+
+export default Home;
