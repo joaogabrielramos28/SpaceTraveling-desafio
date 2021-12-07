@@ -1,1 +1,39 @@
 // TODO
+
+.postList{
+  max-width: 1200px;
+
+  margin: 0 auto;
+  .post{
+    margin: 3rem auto;
+    width: 100%;
+    padding: 1rem 0;
+
+    h2{
+      color:var(--white);
+      font-weight: 700;
+      font-size: 1.7rem;
+      margin-bottom: .3rem;
+    }
+    p{
+      color: var(--grey-300);
+      font-weight: 400;
+      font-size: 1rem;
+    }
+
+    .postInfo{
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+
+      svg{
+        color: var(--grey-300);
+      }
+      span{
+        font-size: .8rem;
+        color: var(--grey-500);
+        margin: 0 1rem;
+      }
+    }
+  }
+}

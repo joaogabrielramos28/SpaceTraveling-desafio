@@ -1,5 +1,6 @@
 import { GetStaticProps, NextComponentType } from 'next';
 
+import { FiCalendar, FiUser } from 'react-icons/fi';
 import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
@@ -27,7 +28,24 @@ interface HomeProps {
 }
 
 const Home: NextComponentType = () => {
-  return <Header />;
+  return (
+    <>
+      <Header />
+      <section className={styles.postList}>
+        <div className={styles.post}>
+          <h2>Como utilizar Hooks</h2>
+          <p>Pensando em sincronização em vez de ciclos de vida.</p>
+
+          <div className={styles.postInfo}>
+            <FiCalendar size={20} />
+            <span>19 Abr 2021</span>
+            <FiUser size={20} />
+            <span>João Gabriel</span>
+          </div>
+        </div>
+      </section>
+    </>
+  );
 };
 
 // export const getStaticProps = async () => {
