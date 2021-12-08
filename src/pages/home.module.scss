@@ -37,3 +37,18 @@
     }
   }
 }
+
+
+.loadMore{
+  color: var(--pink);
+  border: none;
+  background: transparent;
+  outline: none;
+  cursor:pointer;
+  font-weight: 600;
+  font-size:1rem;
+  &:hover{
+    filter: brightness(80%);
+    transition: filter .2s ease;
+  }
+}

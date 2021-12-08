@@ -43,6 +43,23 @@ const Home: NextComponentType = () => {
             <span>João Gabriel</span>
           </div>
         </div>
+        <div className={styles.post}>
+          <h2>Criando um app CRA do zero</h2>
+          <p>
+            Tudo sobre como criar a sua primeira aplicação utilizando Create
+            React App
+          </p>
+
+          <div className={styles.postInfo}>
+            <FiCalendar size={20} />
+            <span>19 Abr 2021</span>
+            <FiUser size={20} />
+            <span>João Gabriel</span>
+          </div>
+        </div>
+        <button className={styles.loadMore} type="button">
+          Carregar mais posts
+        </button>
       </section>
     </>
   );
