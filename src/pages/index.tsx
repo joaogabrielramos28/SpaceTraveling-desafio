@@ -1,9 +1,10 @@
 import { GetStaticProps, NextComponentType } from 'next';
-
+import Prismic from '@prismicio/client';
+import { RichText } from 'prismic-dom';
 import { FiCalendar, FiUser } from 'react-icons/fi';
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 import { getPrismicClient } from '../services/prismic';
-
-import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 
 import Header from '../components/Header/index';
@@ -18,6 +19,18 @@ interface Post {
   };
 }
 
+type PostData = {
+  slug: string;
+  title: string;
+  subtitle: string;
+  author: string;
+  first_publication_date: string;
+};
+
+interface PostProps {
+  posts: PostData[];
+}
+
 interface PostPagination {
   next_page: string;
   results: Post[];
@@ -27,36 +40,25 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-const Home: NextComponentType = () => {
+export const Home: NextComponentType<PostProps> = ({ posts }: PostProps) => {
   return (
     <>
       <Header />
       <section className={styles.postList}>
-        <div className={styles.post}>
-          <h2>Como utilizar Hooks</h2>
-          <p>Pensando em sincronização em vez de ciclos de vida.</p>
+        {posts.map(post => (
+          <div key={post.slug} className={styles.post}>
+            <h2>{post.title}</h2>
+            <p>{post.subtitle}</p>
 
-          <div className={styles.postInfo}>
-            <FiCalendar size={20} />
-            <span>19 Abr 2021</span>
-            <FiUser size={20} />
-            <span>João Gabriel</span>
+            <div className={styles.postInfo}>
+              <FiCalendar size={20} />
+              <span>{post.first_publication_date}</span>
+              <FiUser size={20} />
+              <span>{post.author}</span>
+            </div>
           </div>
-        </div>
-        <div className={styles.post}>
-          <h2>Criando um app CRA do zero</h2>
-          <p>
-            Tudo sobre como criar a sua primeira aplicação utilizando Create
-            React App
-          </p>
+        ))}
 
-          <div className={styles.postInfo}>
-            <FiCalendar size={20} />
-            <span>19 Abr 2021</span>
-            <FiUser size={20} />
-            <span>João Gabriel</span>
-          </div>
-        </div>
         <button className={styles.loadMore} type="button">
           Carregar mais posts
         </button>
@@ -65,11 +67,34 @@ const Home: NextComponentType = () => {
   );
 };
 
-// export const getStaticProps = async () => {
-//   // const prismic = getPrismicClient();
-//   // const postsResponse = await prismic.query(TODO);
+export const getStaticProps: GetStaticProps = async () => {
+  const prismic = getPrismicClient();
+  const postsResponse = await prismic.query(
+    Prismic.Predicates.at('document.type', 'post'),
+    { fetch: ['post.title', 'post.subtitle', 'post.author'] }
+  );
 
-//   // TODO
-// };
+  const posts: PostProps[] = postsResponse.results.map(post => {
+    return {
+      slug: post.uid,
+      title: RichText.asText(post.data.title),
+      subtitle: RichText.asText(post.data.subtitle),
+      author: RichText.asText(post.data.author),
+      first_publication_date: format(
+        new Date(post.first_publication_date),
+        ' dd MMM yyyy',
+        {
+          locale: ptBR,
+        }
+      ),
+    };
+  });
+
+  return {
+    props: {
+      posts,
+    },
+  };
+};
 
 export default Home;
