@@ -1,4 +1,5 @@
 import { GetStaticProps } from 'next';
+import Link from 'next/link';
 import Prismic from '@prismicio/client';
 import { RichText } from 'prismic-dom';
 import { FiCalendar, FiUser } from 'react-icons/fi';
@@ -72,7 +73,9 @@ export default function Home({ postsPagination }: HomeProps): ReactElement {
       <section className={styles.postList}>
         {posts.map(post => (
           <div key={post.uid} className={styles.post}>
-            <h2>{post.data.title}</h2>
+            <Link href={`/post/${post.uid}`}>
+              <h2>{post.data.title}</h2>
+            </Link>
             <p>{post.data.subtitle}</p>
 
             <div className={styles.postInfo}>
