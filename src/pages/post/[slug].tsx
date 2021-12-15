@@ -1,9 +1,15 @@
+/* eslint-disable react/no-danger */
 import { GetStaticPaths, GetStaticProps } from 'next';
-
+import { ReactElement } from 'react';
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
+import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
+import { RichText } from 'prismic-dom';
+import { useRouter } from 'next/router';
+import Prismic from '@prismicio/client';
 import { getPrismicClient } from '../../services/prismic';
-
-import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
+import Header from '../../components/Header';
 
 interface Post {
   first_publication_date: string | null;
@@ -26,20 +32,139 @@ interface PostProps {
   post: Post;
 }
 
-// export default function Post() {
-//   // TODO
-// }
+export default function Post({ post }: PostProps): ReactElement {
+  const router = useRouter();
 
-// export const getStaticPaths = async () => {
-//   const prismic = getPrismicClient();
-//   const posts = await prismic.query(TODO);
+  if (router.isFallback) {
+    return <h2>Carregando...</h2>;
+  }
 
-//   // TODO
-// };
+  const sum = post.data.content.map(content => {
+    const body = content.body.map(data => {
+      const words: string[] = data.text.split(' ');
+      const postWords = +words.length;
 
-// export const getStaticProps = async context => {
-//   const prismic = getPrismicClient();
-//   const response = await prismic.getByUID(TODO);
+      return postWords;
+    });
 
-//   // TODO
-// };
+    const heading = RichText.asText(content.heading).split(' ').length;
+
+    body.push(heading);
+    return body;
+  });
+
+  function getTotalWords(total, item): number {
+    return total + item;
+  }
+  const SumWordsPerContent = sum.map(array => {
+    const arraySum = array.reduce(getTotalWords, 0);
+
+    return arraySum;
+  });
+
+  const total = SumWordsPerContent.reduce(getTotalWords, 0);
+
+  const timeToRead = Math.ceil(total / 200);
+
+  return (
+    <>
+      <Header />
+      <img
+        src={post.data.banner.url}
+        alt={post.data.title}
+        className={styles.banner}
+      />
+      <div className={styles.container}>
+        <h1>{post.data.title}</h1>
+        <div className={styles.postInfos}>
+          <span>
+            <FiCalendar />
+            {post.first_publication_date}
+          </span>
+          <span>
+            <FiUser />
+            {post.data.author}
+          </span>
+          <span>
+            <FiClock />
+            {timeToRead} min
+          </span>
+        </div>
+        {post.data.content.map(content => (
+          <article key={content.heading} className={styles.postContent}>
+            <h3
+              dangerouslySetInnerHTML={{
+                __html: RichText.asHtml(content.heading),
+              }}
+            />
+            {}
+
+            <div
+              className={styles.postContent}
+              dangerouslySetInnerHTML={{
+                __html: RichText.asHtml(content.body),
+              }}
+            />
+          </article>
+        ))}
+      </div>
+    </>
+  );
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const prismic = getPrismicClient();
+  const posts = await prismic.query([
+    Prismic.Predicates.at('document.type', 'post'),
+  ]);
+
+  const paths = posts.results.map(post => {
+    return {
+      params: {
+        slug: post.uid,
+      },
+    };
+  });
+
+  return {
+    paths,
+    fallback: true,
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const { slug } = params;
+
+  const prismic = getPrismicClient();
+  const response = await prismic.getByUID('post', String(slug), {});
+
+  const post = {
+    first_publication_date: format(
+      new Date(response.first_publication_date),
+      ' dd MMM yyyy',
+      {
+        locale: ptBR,
+      }
+    ),
+    data: {
+      title: RichText.asText(response.data.title),
+      banner: {
+        url: response.data.banner.url,
+      },
+      author: RichText.asText(response.data.author),
+      content: response.data.content.map(content => {
+        return {
+          heading: content.heading,
+          body: content.body,
+        };
+      }),
+    },
+  };
+
+  return {
+    props: {
+      post,
+    },
+    revalidate: 60 * 30, // 30 min
+  };
+};
