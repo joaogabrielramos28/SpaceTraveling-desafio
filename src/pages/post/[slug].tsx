@@ -92,7 +92,8 @@ export default function Post({ post }: PostProps): ReactElement {
         </div>
         {post.data.content.map(content => (
           <article key={content.heading} className={styles.postContent}>
-            <h3
+            <div
+              className={styles.articleTitle}
               dangerouslySetInnerHTML={{
                 __html: RichText.asHtml(content.heading),
               }}
