@@ -10,6 +10,7 @@ import Prismic from '@prismicio/client';
 import { getPrismicClient } from '../../services/prismic';
 import styles from './post.module.scss';
 import Header from '../../components/Header';
+import Comments from '../../components/comments';
 
 interface Post {
   first_publication_date: string | null;
@@ -108,6 +109,7 @@ export default function Post({ post }: PostProps): ReactElement {
             />
           </article>
         ))}
+        <Comments />
       </div>
     </>
   );
