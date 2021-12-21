@@ -135,7 +135,7 @@ export default function Post({
           {navigation.prevPost &&
             navigation.prevPost.map(prevPost => (
               <>
-                <p>
+                <p key={prevPost.uid}>
                   {RichText.asText(prevPost.data.title) || ''}
                   <Link href={`/post/${prevPost.uid}`}>
                     <a>Post anterior</a>
@@ -146,7 +146,7 @@ export default function Post({
           {navigation.nextPost &&
             navigation.nextPost.map(nextPost => (
               <>
-                <p>
+                <p key={nextPost.uid}>
                   {RichText.asText(nextPost.data.title) || ''}
                   <Link href={`/post/${nextPost.uid}`}>
                     <a>Próximo post</a>
