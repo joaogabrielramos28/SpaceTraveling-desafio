@@ -70,24 +70,40 @@
         transition:.4s ease
       }
     }
+
+
   }
 
-  .previewExit{
+  .editedOn{
     width: 100%;
-    display: flex;
-    justify-content: center;
-    background-color: var(--grey-300);
-    color: var(--grey-800);
-    font-weight: bold;
-    padding:12px;
-
-    text-decoration: none;
-    border-radius: 8px;
-
-
-    &:hover{
-      opacity: 0.7;
-      transition: .4s ease
-    }
+    margin-top: 1rem;
+    color: var(--grey-300);
+    opacity: .4;
   }
+
+  .othersPosts{
+    border-top: 1px solid var(--grey-300);
+    width: 100%;
+    padding-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+
+    p{
+      color: var(--grey-500);
+      display: flex;
+      flex-direction: column;
+
+
+
+      a{
+        margin-top: 0.5rem;
+        color: var(--pink);
+        text-decoration: none;
+      }
+    }
+
+
+
+  }
+
 }
